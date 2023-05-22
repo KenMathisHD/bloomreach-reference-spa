@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
-import { Configuration, PageModel, extractSearchParams } from '@bloomreach/spa-sdk';
-import { ParsedUrlQuery } from 'querystring';
-import { NEXT_PUBLIC_BR_MULTI_TENANT_SUPPORT, NEXT_PUBLIC_BRXM_ENDPOINT } from './constants';
+import {
+  Configuration,
+  PageModel,
+  extractSearchParams,
+} from "@bloomreach/spa-sdk";
+import { ParsedUrlQuery } from "querystring";
+import {
+  NEXT_PUBLIC_BR_MULTI_TENANT_SUPPORT,
+  NEXT_PUBLIC_BRXM_ENDPOINT,
+} from "./constants";
 
 export interface CommerceConfig {
   graphqlServiceUrl: string;
@@ -39,28 +46,50 @@ type BuildConfigurationOptions = {
   baseUrl: string;
 };
 
-type ConfigurationBuilder = Omit<Configuration & Partial<BuildConfigurationOptions>, 'httpClient'>;
+type ConfigurationBuilder = Omit<
+  Configuration & Partial<BuildConfigurationOptions>,
+  "httpClient"
+>;
 
-export const DUMMY_BR_UID_2_FOR_PREVIEW = 'uid%3D0000000000000%3Av%3D11.5%3Ats%3D1428617911187%3Ahc%3D55';
+export const DUMMY_BR_UID_2_FOR_PREVIEW =
+  "uid%3D0000000000000%3Av%3D11.5%3Ats%3D1428617911187%3Ahc%3D55";
 
-export function loadCommerceConfig(page: PageModel, query?: ParsedUrlQuery): CommerceConfig {
-  const channelParams = page.channel?.info.props as ChannelParameters | undefined;
+export function loadCommerceConfig(
+  page: PageModel,
+  query?: ParsedUrlQuery
+): CommerceConfig {
+  const channelParams = page.channel?.info.props as
+    | ChannelParameters
+    | undefined;
   const commerceConfig: CommerceConfig = {
     graphqlServiceUrl:
-      channelParams?.graphql_baseurl || process.env.NEXT_PUBLIC_APOLLO_SERVER_URI || 'http://localhost:4000',
-    connector: process.env.NEXT_PUBLIC_DEFAULT_CONNECTOR ?? '',
-    discoveryAccountId: channelParams?.discoveryAccountId || process.env.NEXT_PUBLIC_DISCOVERY_ACCOUNT_ID,
+      channelParams?.graphql_baseurl ||
+      process.env.NEXT_PUBLIC_APOLLO_SERVER_URI ||
+      "http://localhost:4000",
+    connector: process.env.NEXT_PUBLIC_DEFAULT_CONNECTOR ?? "",
+    discoveryAccountId:
+      channelParams?.discoveryAccountId ||
+      process.env.NEXT_PUBLIC_DISCOVERY_ACCOUNT_ID,
     discoveryAuthKey: process.env.NEXT_PUBLIC_DISCOVERY_AUTH_KEY,
-    discoveryDomainKey: channelParams?.discoveryDomainKey || process.env.NEXT_PUBLIC_DISCOVERY_DOMAIN_KEY,
-    discoveryViewId: channelParams?.discoveryViewId || process.env.NEXT_PUBLIC_DISCOVERY_VIEW_ID,
+    discoveryDomainKey:
+      channelParams?.discoveryDomainKey ||
+      process.env.NEXT_PUBLIC_DISCOVERY_DOMAIN_KEY,
+    discoveryViewId:
+      channelParams?.discoveryViewId ||
+      process.env.NEXT_PUBLIC_DISCOVERY_VIEW_ID,
     discoveryCatalogViews: process.env.NEXT_PUBLIC_DISCOVERY_CATALOG_VIEWS,
-    discoveryCustomAttrFields: process.env.NEXT_PUBLIC_DISCOVERY_CUSTOM_ATTR_FIELDS?.split(','),
-    discoveryCustomVarAttrFields: process.env.NEXT_PUBLIC_DISCOVERY_CUSTOM_VARIANT_ATTR_FIELDS?.split(','),
-    discoveryCustomVarListPriceField: process.env.NEXT_PUBLIC_DISCOVERY_CUSTOM_VARIANT_LIST_PRICE_FIELD,
-    discoveryCustomVarPurchasePriceField: process.env.NEXT_PUBLIC_DISCOVERY_CUSTOM_VARIANT_PURCHASE_PRICE_FIELD,
-    brEnvType: channelParams?.discoveryRealm === 'PRODUCTION'
-      ? undefined
-      : channelParams?.discoveryRealm || process.env.NEXT_PUBLIC_BR_ENV_TYPE,
+    discoveryCustomAttrFields:
+      process.env.NEXT_PUBLIC_DISCOVERY_CUSTOM_ATTR_FIELDS?.split(","),
+    discoveryCustomVarAttrFields:
+      process.env.NEXT_PUBLIC_DISCOVERY_CUSTOM_VARIANT_ATTR_FIELDS?.split(","),
+    discoveryCustomVarListPriceField:
+      process.env.NEXT_PUBLIC_DISCOVERY_CUSTOM_VARIANT_LIST_PRICE_FIELD,
+    discoveryCustomVarPurchasePriceField:
+      process.env.NEXT_PUBLIC_DISCOVERY_CUSTOM_VARIANT_PURCHASE_PRICE_FIELD,
+    brEnvType:
+      channelParams?.discoveryRealm === "PRODUCTION"
+        ? undefined
+        : channelParams?.discoveryRealm || process.env.NEXT_PUBLIC_BR_ENV_TYPE,
     brAccountName: getBrAccountName(page, query),
   };
 
@@ -78,9 +107,9 @@ export function notEmpty<T>(value: T | null | undefined): value is T {
 export function deleteUndefined(obj: Record<string, any> | undefined): void {
   if (obj) {
     Object.keys(obj).forEach((key: string) => {
-      if (obj[key] && typeof obj[key] === 'object') {
+      if (obj[key] && typeof obj[key] === "object") {
         deleteUndefined(obj[key]);
-      } else if (typeof obj[key] === 'undefined') {
+      } else if (typeof obj[key] === "undefined") {
         delete obj[key]; // eslint-disable-line no-param-reassign
       }
     });
@@ -90,7 +119,7 @@ export function deleteUndefined(obj: Record<string, any> | undefined): void {
 export function buildConfiguration(
   path: string,
   endpoint: string = NEXT_PUBLIC_BRXM_ENDPOINT,
-  hasMultiTenantSupport: boolean = NEXT_PUBLIC_BR_MULTI_TENANT_SUPPORT,
+  hasMultiTenantSupport: boolean = NEXT_PUBLIC_BR_MULTI_TENANT_SUPPORT
 ): ConfigurationBuilder {
   const configuration: ConfigurationBuilder = {
     path,
@@ -101,49 +130,62 @@ export function buildConfiguration(
     // It allows operating the same Reference SPA for different channels in EM using endpoint query parameter in the URL
     // It's used mainly by BloomReach and is not needed for most customers
   } else if (hasMultiTenantSupport) {
-    const endpointQueryParameter = 'endpoint';
-    const { url, searchParams } = extractSearchParams(path, [endpointQueryParameter].filter(Boolean));
+    const endpointQueryParameter = "endpoint";
+    const { url, searchParams } = extractSearchParams(
+      path,
+      [endpointQueryParameter].filter(Boolean)
+    );
 
-    configuration.endpoint = searchParams.get(endpointQueryParameter) ?? '';
-    configuration.baseUrl = `?${endpointQueryParameter}=${searchParams.get(endpointQueryParameter)}`;
+    configuration.endpoint = searchParams.get(endpointQueryParameter) ?? "";
+    configuration.baseUrl = `?${endpointQueryParameter}=${searchParams.get(
+      endpointQueryParameter
+    )}`;
     configuration.path = url;
   }
   return configuration;
 }
 
 export function isLoading(loading: boolean): boolean {
-  const ssrMode = typeof window === 'undefined';
+  const ssrMode = typeof window === "undefined";
   // In SSR phase, ignore the `loading` param returned by Apollo client's hooks.
   return ssrMode ? false : loading;
 }
 
-function getBrAccountName(pageModel: PageModel, query?: ParsedUrlQuery): string | undefined {
+function getBrAccountName(
+  pageModel: PageModel,
+  query?: ParsedUrlQuery
+): string | undefined {
   if (process.env.NEXT_PUBLIC_BR_ACCOUNT_NAME) {
     return process.env.NEXT_PUBLIC_BR_ACCOUNT_NAME;
   }
 
-  const { graphqlTenantName } = pageModel.channel?.info.props as ChannelParameters;
+  const { graphqlTenantName } = pageModel.channel?.info
+    .props as ChannelParameters;
   if (graphqlTenantName) {
     return graphqlTenantName.toLowerCase();
   }
 
-  const endpoint = NEXT_PUBLIC_BRXM_ENDPOINT || (NEXT_PUBLIC_BR_MULTI_TENANT_SUPPORT ? query?.endpoint : '');
+  const endpoint =
+    NEXT_PUBLIC_BRXM_ENDPOINT ||
+    (NEXT_PUBLIC_BR_MULTI_TENANT_SUPPORT ? query?.endpoint : "");
   if (!endpoint) {
     return undefined;
   }
   const endpointValue = Array.isArray(endpoint) ? endpoint[0] : endpoint;
-  return new URL(endpointValue).hostname.split('.')[0];
+  return new URL(endpointValue).hostname.split(".")[0];
 }
 
-export function parseCategoryPickerField(categoryIdValue?: string):
-  { categoryId: string, connectorId?: string} | undefined {
+export function parseCategoryPickerField(
+  categoryIdValue?: string
+): { categoryId: string; connectorId?: string } | undefined {
   if (!categoryIdValue) {
     return undefined;
   }
 
   try {
     // new field format in JSON
-    const { categoryid: categoryId, connectorid: connectorId } = JSON.parse(categoryIdValue);
+    const { categoryid: categoryId, connectorid: connectorId } =
+      JSON.parse(categoryIdValue);
     if (categoryId) {
       return {
         categoryId,
@@ -152,22 +194,28 @@ export function parseCategoryPickerField(categoryIdValue?: string):
     }
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.log('Error parsing categoryid as JSON: ', err);
+    console.log("Error parsing categoryid as JSON: ", err);
   }
 
   // fall-back to old field format (categoryid as string)
   return { categoryId: categoryIdValue };
 }
 
-export function parseProductPickerField(productIdValue?: string, variantIdValue?: string):
-  { itemId: string, connectorId?: string } | undefined {
+export function parseProductPickerField(
+  productIdValue?: string,
+  variantIdValue?: string
+): { itemId: string; connectorId?: string } | undefined {
   if (!productIdValue) {
     return undefined;
   }
 
   try {
     // new field format as a combination of productid/variantid in JSON
-    const { productid: productId, variantid: variantId, connectorid: connectorId } = JSON.parse(productIdValue);
+    const {
+      productid: productId,
+      variantid: variantId,
+      connectorid: connectorId,
+    } = JSON.parse(productIdValue);
     const selectedId = variantId?.id ? variantId : productId;
     const { id, code } = selectedId;
     if (code) {
@@ -185,12 +233,15 @@ export function parseProductPickerField(productIdValue?: string, variantIdValue?
     }
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.log('Error parsing itemid as JSON: ', err);
+    console.log("Error parsing itemid as JSON: ", err);
   }
 
   // fall-back to old field format as separated productid and variantid fields
   const selectedId = variantIdValue?.length ? variantIdValue : productIdValue;
-  const [, id, code] = selectedId?.match(/id=([\w\d._=-]+[\w\d=]?)?;code=([\w\d._=/-]+[\w\d=]?)?/i) ?? [];
+  const [, id, code] =
+    selectedId?.match(
+      /id=([\w\d._=-]+[\w\d=]?)?;code=([\w\d._=/-]+[\w\d=]?)?/i
+    ) ?? [];
   if (code) {
     return { itemId: `${id}___${code}` };
   }

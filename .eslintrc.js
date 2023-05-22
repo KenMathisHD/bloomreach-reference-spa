@@ -51,6 +51,11 @@ module.exports = {
       },
     ],
     'implicit-arrow-linebreak': 'off',
+    'linebreak-style': [0,"error","windows"],
     '@typescript-eslint/no-use-before-define': 'off',
+    'operator-linebreak': 'off',
+    'comma-dangle': 'off',
+    'import-newlines/enforce': 'off',
+    'quotes': 'off',
   },
 };

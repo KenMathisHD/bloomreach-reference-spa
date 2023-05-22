@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-import App, { AppContext, AppInitialProps } from 'next/app';
-import Head from 'next/head';
-import { AppTreeType } from 'next/dist/shared/lib/utils';
-import { config } from '@fortawesome/fontawesome-svg-core';
+import App, { AppContext, AppInitialProps } from "next/app";
+import Head from "next/head";
+import { AppTreeType } from "next/dist/shared/lib/utils";
+import { config } from "@fortawesome/fontawesome-svg-core";
 
-import '@fortawesome/fontawesome-svg-core/styles.css';
-import 'bootstrap/scss/bootstrap.scss';
-import './_index.scss';
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import "bootstrap/scss/bootstrap.scss";
+import "./_index.scss";
 
 config.autoAddCss = false;
 
 export default class MyApp extends App {
   static AppTree: AppTreeType;
 
-  static async getInitialProps(appContext: AppContext): Promise<AppInitialProps> {
+  static async getInitialProps(
+    appContext: AppContext
+  ): Promise<AppInitialProps> {
     // calls page's `getInitialProps` and fills `appProps.pageProps`
     const appProps = await App.getInitialProps(appContext);
     // console.log('[MyApp.getInitialProps]: appProps=', appProps);
@@ -45,7 +47,11 @@ export default class MyApp extends App {
       <>
         <Head>
           <meta charSet="utf-8" />
-          <meta key="description" name="description" content="Example React SPA for brX SaaS" />
+          <meta
+            key="description"
+            name="description"
+            content="Example React SPA for brX SaaS"
+          />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta name="theme-color" content="#00b2db" />
 
@@ -56,6 +62,8 @@ export default class MyApp extends App {
           <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         </Head>
         <div className="d-flex flex-column vh-100">
+          <div>Test that thang</div>
+          <div>A change to a thing</div>
           <Component {...pageProps} />
         </div>
       </>
